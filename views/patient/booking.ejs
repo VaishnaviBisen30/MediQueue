@@ -1,0 +1,108 @@
+<%- include("./partials/patientHeader", { pageTitle: "Book Appointment | MediQueue" }) %>
+
+    <main class="flex-1 max-w-4xl mx-auto w-full px-6 py-10">
+
+        <a href="/patient/doctors/<%= doctor._id %>"
+            class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-800 transition">
+            ← Back to Doctor Profile
+        </a>
+
+        <section class="mt-6 bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+
+            <p class="text-sm font-semibold text-blue-600">
+                APPOINTMENT BOOKING
+            </p>
+
+            <h1 class="text-3xl font-bold text-slate-800 mt-2">
+                Book an Appointment
+            </h1>
+
+            <p class="text-slate-600 mt-2">
+                Dr. <%= doctor.user?.name || "Doctor" %>
+            </p>
+
+            <div
+                class="mt-4 inline-flex items-center rounded-lg bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700">
+                <i class="fa-regular fa-calendar mr-2"></i>
+                <%= day %>
+            </div>
+
+            <h2 class="text-xl font-semibold text-slate-800 mt-8 mb-4">
+                Available Time Slots
+            </h2>
+
+            <% if (slots.length===0) { %>
+
+                <div class="rounded-xl border border-slate-200 bg-slate-50 p-6 text-center">
+                    <p class="text-slate-600">
+                        No slots are available for this day.
+                    </p>
+                </div>
+
+                <% } else { %>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+
+                        <% slots.forEach((slot)=> { %>
+
+                            <div
+                                class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow">
+
+                                <div class="flex items-center gap-3">
+
+                                    <div
+                                        class="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                                        <i class="fa-regular fa-clock text-lg"></i>
+                                    </div>
+
+                                    <div>
+                                        <p class="font-semibold text-slate-800">
+                                            <%= slot.startTime %> – <%= slot.endTime %>
+                                        </p>
+
+                                        <p class="text-sm text-slate-500 mt-1">
+                                            30-minute appointment
+                                        </p>
+                                    </div>
+
+                                </div>
+
+                                <form action="/patients/doctors/<%= doctor._id %>/appointments" method="POST"
+                                    class="mt-5">
+
+                                    <label for="date-<%= slot.startTime.replace(':', '') %>"
+                                        class="block text-sm font-medium text-slate-700 mb-2">
+                                        Select appointment date
+                                    </label>
+
+                                    <input type="date" id="date-<%= slot.startTime.replace(':', '') %>" name="date"
+                                        required
+                                        class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+
+                                    <input type="hidden" name="day" value="<%= day %>" />
+
+                                    <input type="hidden" name="startTime" value="<%= slot.startTime %>" />
+
+                                    <input type="hidden" name="endTime" value="<%= slot.endTime %>" />
+
+                                    <button type="submit"
+                                        class="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                                        Book Appointment
+                                        <i class="fa-solid fa-arrow-right"></i>
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                            <% }) %>
+
+                    </div>
+
+                    <% } %>
+
+        </section>
+
+    </main>
+
+    <%- include("../partials/footer") %>

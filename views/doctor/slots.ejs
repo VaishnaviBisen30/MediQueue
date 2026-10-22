@@ -1,0 +1,92 @@
+<%- include("./partials/doctorHeader") %>
+
+    <div class="max-w-5xl mx-auto px-6 py-10">
+
+        <!-- Page Heading -->
+        <div class="mb-8">
+            <p class="text-sm font-medium text-blue-600">
+                Appointment Slots
+            </p>
+
+            <h1 class="text-3xl font-bold text-slate-800 mt-1">
+                <%= day %>
+            </h1>
+
+            <p class="text-slate-500 mt-2">
+                Your generated appointment slots for <%= day %>.
+            </p>
+        </div>
+
+
+        <!-- Appointment Slots -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+
+            <% if (slots.length===0) { %>
+
+                <div class="col-span-full bg-white rounded-2xl border border-slate-200 p-8 text-center">
+                    <p class="text-slate-500">
+                        No appointment slots available.
+                    </p>
+                </div>
+
+                <% } else { %>
+
+                    <% slots.forEach((slot)=> { %>
+
+                        <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm">
+                            <p class="text-lg font-semibold text-slate-800">
+                                <%= slot.startTime %> - <%= slot.endTime %>
+                            </p>
+
+                            <p class="text-sm text-slate-500 mt-1">
+                                Available
+                            </p>
+                        </div>
+
+                        <% }) %>
+
+                            <% } %>
+
+        </div>
+
+
+        <!-- Previous / Next Day Navigation -->
+        <div class="flex items-center justify-between mt-10">
+
+            <!-- Previous Day -->
+            <% if (previousDay) { %>
+
+                <a href="/doctors/availability/<%= previousDay.day %>/slots"
+                    class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition">
+
+                    <span>←</span>
+                    <span>
+                        <%= previousDay.day %>
+                    </span>
+
+                </a>
+
+                <% } else { %>
+
+                    <div></div>
+
+                    <% } %>
+
+
+                        <!-- Next Day -->
+                        <% if (nextDay) { %>
+
+                            <a href="/doctors/availability/<%= nextDay.day %>/slots"
+                                class="inline-flex items-center gap-2 text-sm font-semibold text-blue-600 hover:text-blue-700 transition">
+
+                                <span>
+                                    <%= nextDay.day %>
+                                </span>
+                                <span>→</span>
+
+                            </a>
+
+                            <% } %>
+
+        </div>
+    </div>

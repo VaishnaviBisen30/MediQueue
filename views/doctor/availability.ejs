@@ -1,0 +1,128 @@
+<%- include("./partials/doctorHeader") %>
+
+<div class="min-h-screen bg-gray-100 py-10 px-4">
+
+    <div class="max-w-2xl mx-auto">
+
+        <div class="bg-white p-8 rounded-xl shadow-md">
+
+            <h1 class="text-3xl font-bold text-blue-600 mb-2">
+                Doctor Availability
+            </h1>
+
+            <% if (!doctor) { %>
+
+                <p class="text-gray-500 mb-6">
+                    You don't have an existing doctor profile.
+                    Please create your profile before adding availability.
+                </p>
+
+                <a
+                    href="/doctors/profile"
+                    class="block w-full text-center bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700"
+                >
+                    Create Profile
+                </a>
+
+            <% } else { %>
+
+                <p class="text-gray-500 mb-6">
+                    Set your weekly working hours
+                </p>
+
+                <form action="/doctors/availability" method="POST">
+
+                    <!-- Day -->
+                    <div class="mb-4">
+                        <label class="block font-semibold mb-2">
+                            Day
+                        </label>
+
+                        <select
+                            name="day"
+                            required
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2"
+                        >
+                            <option value="">Select Day</option>
+                            <option value="Monday">Monday</option>
+                            <option value="Tuesday">Tuesday</option>
+                            <option value="Wednesday">Wednesday</option>
+                            <option value="Thursday">Thursday</option>
+                            <option value="Friday">Friday</option>
+                            <option value="Saturday">Saturday</option>
+                            <option value="Sunday">Sunday</option>
+                        </select>
+                    </div>
+
+                    <!-- Start Time -->
+                    <div class="mb-4">
+                        <label class="block font-semibold mb-2">
+                            Start Time
+                        </label>
+
+                        <input
+                            type="time"
+                            name="startTime"
+                            required
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2"
+                        >
+                    </div>
+
+                    <!-- End Time -->
+                    <div class="mb-4">
+                        <label class="block font-semibold mb-2">
+                            End Time
+                        </label>
+
+                        <input
+                            type="time"
+                            name="endTime"
+                            required
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2"
+                        >
+                    </div>
+
+                    <!-- Break Start -->
+                    <div class="mb-4">
+                        <label class="block font-semibold mb-2">
+                            Break Start Time
+                        </label>
+
+                        <input
+                            type="time"
+                            name="breakStart"
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2"
+                        >
+                    </div>
+
+                    <!-- Break End -->
+                    <div class="mb-6">
+                        <label class="block font-semibold mb-2">
+                            Break End Time
+                        </label>
+
+                        <input
+                            type="time"
+                            name="breakEnd"
+                            class="w-full border border-gray-300 rounded-lg px-4 py-2"
+                        >
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700"
+                    >
+                        Add Availability
+                    </button>
+
+                </form>
+
+            <% } %>
+
+        </div>
+
+    </div>
+
+</div>
+
+<%- include("../partials/footer") %>

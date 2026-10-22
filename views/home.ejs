@@ -1,0 +1,134 @@
+<%- include("partials/header") %>
+
+<main class="min-h-[calc(100vh-4rem)] bg-slate-50 flex flex-col justify-center">
+
+    <!-- Hero Section -->
+
+    <section class="max-w-6xl mx-auto px-6 py-14 sm:py-20">
+
+        <!-- Header Heading -->
+
+        <div class="text-center max-w-3xl mx-auto">
+
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100 mb-4">
+                Smart Healthcare Scheduling
+            </span>
+
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                Streamlined Appointments with <span class="text-blue-600">MediQueue</span>
+            </h1>
+
+            <p class="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed">
+                A simple and convenient platform connecting patients, doctors, and administrators in one unified ecosystem.
+            </p>
+
+        </div>
+
+        <!-- Role Information Cards -->
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-14">
+
+            <!-- Patient -->
+
+            <div class="bg-white rounded-2xl border border-slate-200/80 p-8 text-center shadow-xs hover:shadow-md hover:-translate-y-1 transition duration-200">
+
+                <div class="w-14 h-14 mx-auto mb-6 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+
+                </div>
+
+                <h2 class="text-xl font-bold text-slate-900 mb-2">
+                    Patient
+                </h2>
+
+                <p class="text-sm text-slate-500 leading-relaxed">
+                    Find doctors, check real-time availability, and book appointments without the waiting room hassle.
+                </p>
+
+            </div>
+
+            <!-- Doctor -->
+
+            <div class="bg-white rounded-2xl border border-slate-200/80 p-8 text-center shadow-xs hover:shadow-md hover:-translate-y-1 transition duration-200">
+
+                <div class="w-14 h-14 mx-auto mb-6 rounded-2xl bg-teal-50 text-teal-600 flex items-center justify-center">
+
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                    </svg>
+
+                </div>
+
+                <h2 class="text-xl font-bold text-slate-900 mb-2">
+                    Doctor
+                </h2>
+
+                <p class="text-sm text-slate-500 leading-relaxed">
+                    Manage your consultation hours, configure break times, and organize daily patient queues.
+                </p>
+
+            </div>
+
+            <!-- Admin -->
+
+            <div class="bg-white rounded-2xl border border-slate-200/80 p-8 text-center shadow-xs hover:shadow-md hover:-translate-y-1 transition duration-200">
+
+                <div class="w-14 h-14 mx-auto mb-6 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
+
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+
+                    </svg>
+
+                </div>
+
+                <h2 class="text-xl font-bold text-slate-900 mb-2">
+                    Admin
+                </h2>
+
+                <p class="text-sm text-slate-500 leading-relaxed">
+                    Verify doctor registrations, regulate platform access, and oversee system health.
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- Action Section -->
+
+        <div class="mt-14 text-center">
+
+            <!-- Visitor View -->
+
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+
+                <a href="/doctors" class="w-full sm:w-auto inline-flex justify-center items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-sm transition">
+                    Find & Book a Doctor
+                </a>
+
+                <a href="/register" class="w-full sm:w-auto inline-flex justify-center items-center px-6 py-3 bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 font-semibold rounded-xl transition">
+                    Create Patient Account
+                </a>
+
+            </div>
+
+            <p class="mt-4 text-sm text-slate-500">
+                Already have an account?
+                <a href="/login" class="text-blue-600 font-medium hover:underline">
+                    Log in here
+                </a>
+            </p>
+
+        </div>
+
+    </section>
+
+</main>
+
+<%- include("partials/footer") %>

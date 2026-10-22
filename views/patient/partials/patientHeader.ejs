@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        <%= typeof pageTitle !=="undefined" ? pageTitle : "MediQueue" %>
+    </title>
+    <link rel="stylesheet" href="/css/output.css">
+</head>
+
+<body class="bg-slate-50 min-h-screen flex flex-col">
+
+    <nav class="bg-white border-b border-slate-200 px-6 py-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+
+            <a href="/patients/dashboard" class="text-2xl font-bold text-indigo-600">
+                MediQueue
+            </a>
+
+            <div class="flex items-center gap-5">
+                <a href="/patients/dashboard"
+                    class="text-sm font-semibold text-slate-600 hover:text-indigo-600 transition">
+                    Dashboard
+                </a>
+
+                <a href="/patients/doctors"
+                    class="text-sm font-semibold text-slate-600 hover:text-indigo-600 transition">
+                    Find Doctors
+                </a>
+
+                <form action="/logout" method="GET">
+                    <button type="submit" class="text-sm font-semibold text-slate-600 hover:text-red-600 transition">
+                        Logout
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </nav>

@@ -1,0 +1,95 @@
+<%- include("./partials/patientHeader", { pageTitle: "My Appointments | MediQueue" }) %>
+
+  <main class="flex-1 max-w-6xl mx-auto w-full px-6 py-10">
+
+    <div class="mb-8">
+      <h1 class="text-3xl font-bold text-slate-800">
+        My Appointments
+      </h1>
+      <p class="text-slate-600 mt-2">
+        View and track your booked doctor appointments.
+      </p>
+    </div>
+
+    <% if (appointments.length===0) { %>
+
+      <div class="bg-white border border-slate-200 rounded-2xl p-10 text-center">
+        <h2 class="text-xl font-semibold text-slate-800">
+          No appointments yet
+        </h2>
+        <p class="text-slate-500 mt-2">
+          You haven't booked any appointments yet.
+        </p>
+        <a href="/patients/doctors"
+          class="inline-block mt-6 rounded-xl bg-blue-600 px-5 py-2 text-white font-semibold hover:bg-blue-700">
+          Browse Doctors
+        </a>
+      </div>
+
+      <% } else { %>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+
+          <% appointments.forEach((appointment)=> { %>
+
+            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <h2 class="text-lg font-bold text-slate-800">
+                    Dr. <%= appointment.doctor?.user?.name || "Doctor" %>
+                  </h2>
+                  <p class="text-sm text-slate-500 mt-1">
+                    <%= appointment.doctor?.specialization || "Specialization unavailable" %>
+                  </p>
+                </div>
+
+
+                <span class="rounded-full px-3 py-1 text-xs font-semibold
+                  <%= appointment.status === 'booked'
+                    ? 'bg-blue-100 text-blue-700'
+                    : appointment.status === 'completed'
+                    ? 'bg-green-100 text-green-700'
+                    : 'bg-red-100 text-red-700' %>">
+                  <%= appointment.status==='booked' ? 'Booked' : appointment.status==='completed' ? 'Completed' :
+                    appointment.cancelledBy==='patient' ? 'Cancelled by you' : appointment.cancelledBy==='doctor'
+                    ? 'Cancelled by doctor' : 'Cancelled' %>
+                </span>
+
+              </div>
+
+              <div class="mt-5 space-y-3 text-sm text-slate-600">
+
+                <p>
+                  <strong class="text-slate-800">Date:</strong>
+                  <%= appointment.date %>
+                </p>
+
+                <p>
+                  <strong class="text-slate-800">Time:</strong>
+                  <%= appointment.startTime %> – <%= appointment.endTime %>
+                </p>
+
+              </div>
+
+              <% if (appointment.status==="booked" ) { %>
+                <form action="/patients/appointments/<%= appointment._id %>/cancel" method="POST" class="mt-6"
+                  onsubmit="return confirm('Are you sure you want to cancel this appointment?');">
+                  <button type="submit"
+                    class="w-full rounded-xl bg-red-500 px-5 py-2.5 text-white font-semibold hover:bg-red-600 transition">
+                    Cancel Appointment
+                  </button>
+                </form>
+                <% } %>
+
+            </div>
+
+            <% }) %>
+
+        </div>
+
+        <% } %>
+
+  </main>
+
+  <%- include("../partials/footer") %>

@@ -1,0 +1,62 @@
+<%- include("./partials/doctorHeader") %>
+
+    <div class="min-h-screen bg-gray-100 py-10 px-4">
+        <div class="max-w-2xl mx-auto">
+            <!-- Saved Availability -->
+            <div class="bg-white p-8 rounded-xl shadow-md">
+                <h1 class="text-3xl font-bold text-blue-600 mb-2">
+                    Your Weekly Schedule
+                </h1>
+
+                <p class="text-gray-500 mb-6">
+                    View and manage your saved availability
+                </p>
+
+                <% if (availability.length===0) { %>
+                    <p class="text-gray-500">
+                        No availability added yet.
+                    </p>
+                    <% } else { %>
+                        <div class="space-y-3">
+                            <% availability.forEach((slot)=> { %>
+                                <div
+                                    class="bg-gray-50 border border-gray-200 rounded-lg p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                    <div>
+                                        <h3 class="font-medium text-slate-900">
+                                            <%= slot.day %>
+                                        </h3>
+
+                                        <p class="text-sm text-slate-500">
+                                            <%= slot.startTime %> - <%= slot.endTime %>
+                                        </p>
+
+                                        <% if (slot.breakStart && slot.breakEnd) { %>
+                                            <p class="text-sm text-orange-600 mt-1">
+                                                Break: <%= slot.breakStart %> - <%= slot.breakEnd %>
+                                            </p>
+                                            <% } %>
+                                    </div>
+
+                                    <div class="flex flex-wrap items-center gap-2">
+                                        <a href="/doctors/availability/<%= encodeURIComponent(slot.day) %>/slots"
+                                            class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition whitespace-nowrap">
+                                            View Available Slots
+                                        </a>
+
+                                        <form action="/doctors/availability/<%= slot._id %>/delete" method="POST"
+                                            onsubmit="return confirm('Are you sure you want to remove this availability?');">
+                                            <button type="submit"
+                                                class="bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-600 transition">
+                                                Remove
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                                <% }) %>
+                        </div>
+                        <% } %>
+            </div>
+        </div>
+    </div>
+
+    <%- include("../partials/footer") %>

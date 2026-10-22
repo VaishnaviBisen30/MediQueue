@@ -1,0 +1,103 @@
+<%- include("./partials/patientHeader", { pageTitle: "Find a Doctor | MediQueue" }) %>
+
+    <main class="flex-1 w-full">
+        <div class="max-w-6xl mx-auto px-6 py-10">
+
+            <!-- Page Heading -->
+            <section class="mb-8">
+                <p class="text-sm font-semibold text-indigo-600">
+                    PATIENT PORTAL
+                </p>
+
+                <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2">
+                    Find a Doctor
+                </h1>
+
+                <p class="text-slate-500 mt-3">
+                    Explore doctor profiles and find the right specialist for you.
+                </p>
+            </section>
+
+            <!-- Empty State -->
+            <% if (doctors.length===0) { %>
+
+                <div class="bg-white border border-slate-200 rounded-2xl p-10 text-center">
+                    <h2 class="text-xl font-bold text-slate-800">
+                        No doctors available yet
+                    </h2>
+
+                    <p class="text-slate-500 mt-2">
+                        Please check back later.
+                    </p>
+                </div>
+
+                <% } else { %>
+
+                    <!-- Doctor Cards -->
+                    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+                        <% doctors.forEach(doctor=> { %>
+
+                            <article
+                                class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all">
+
+                                <div
+                                    class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl font-bold">
+                                    <%= doctor.user?.name ? doctor.user.name.charAt(0).toUpperCase() : "D" %>
+                                </div>
+
+                                <h2 class="text-xl font-bold text-slate-900 mt-4">
+                                    Dr. <%= doctor.user?.name || "Doctor" %>
+                                </h2>
+
+                                <p class="text-indigo-600 font-semibold mt-1">
+                                    <%= doctor.specialization %>
+                                </p>
+
+                                <div class="mt-5 space-y-3 text-sm text-slate-600">
+
+                                    <p>
+                                        <span class="font-semibold text-slate-800">Qualification:</span>
+                                        <%= doctor.qualification %>
+                                    </p>
+
+                                    <p>
+                                        <span class="font-semibold text-slate-800">Experience:</span>
+                                        <%= doctor.experience %> years
+                                    </p>
+
+                                    <p>
+                                        <span class="font-semibold text-slate-800">Consultation fee:</span>
+                                        ₹<%= doctor.consultationFee %>
+                                    </p>
+
+                                </div>
+
+                                <% if (doctor.about) { %>
+                                    <p class="text-sm text-slate-500 mt-4 leading-relaxed">
+                                        <%= doctor.about %>
+                                    </p>
+                                    <% } %>
+
+
+                                        <div class="mt-6 pt-4 border-t border-slate-100">
+                                            <a href="/patients/doctors/<%= doctor._id %>"
+                                                class="inline-flex items-center justify-center w-full rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 transition">
+                                                View Profile
+                                                <span class="ml-2">→</span>
+                                            </a>
+                                        </div>
+
+
+                            </article>
+
+                            <% }) %>
+
+                    </section>
+
+                    <% } %>
+
+        </div>
+    </main>
+
+    <%- include("../partials/footer") %>

@@ -1,0 +1,176 @@
+<%- include("./partials/doctorHeader") %>
+
+<div class="min-h-screen bg-gray-100 py-10 px-4">
+
+    <div class="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-md">
+
+        <h1 class="text-3xl font-bold text-blue-600 mb-2">
+            Doctor Profile
+        </h1>
+
+        <% if (doctor) { %>
+
+            <p class="text-gray-500 mb-6">
+                Your existing professional profile
+            </p>
+
+            <form action="/doctors/profile" method="POST">
+
+                <div class="mb-4">
+                    <label class="block font-semibold mb-2">
+                        Specialization
+                    </label>
+
+                    <input
+                        type="text"
+                        name="specialization"
+                        value="<%= doctor.specialization %>"
+                        required
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block font-semibold mb-2">
+                        Qualification
+                    </label>
+
+                    <input
+                        type="text"
+                        name="qualification"
+                        value="<%= doctor.qualification %>"
+                        required
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block font-semibold mb-2">
+                        Experience
+                    </label>
+
+                    <input
+                        type="number"
+                        name="experience"
+                        value="<%= doctor.experience %>"
+                        required
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block font-semibold mb-2">
+                        Consultation Fee
+                    </label>
+
+                    <input
+                        type="number"
+                        name="consultationFee"
+                        value="<%= doctor.consultationFee %>"
+                        required
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                </div>
+
+                <div class="mb-6">
+                    <label class="block font-semibold mb-2">
+                        About
+                    </label>
+
+                    <textarea
+                        name="about"
+                        rows="4"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2"><%= doctor.about || "" %></textarea>
+                </div>
+
+                <button
+                    type="submit"
+                    class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700">
+                    Update Profile
+                </button>
+
+            </form>
+
+        <% } else { %>
+
+            <p class="text-gray-500 mb-6">
+                You don't have an existing profile. Create your professional profile to continue.
+            </p>
+
+            <form action="/doctors/profile" method="POST">
+
+                <div class="mb-4">
+                    <label class="block font-semibold mb-2">
+                        Specialization
+                    </label>
+
+                    <input
+                        type="text"
+                        name="specialization"
+                        placeholder="e.g. Cardiologist"
+                        required
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block font-semibold mb-2">
+                        Qualification
+                    </label>
+
+                    <input
+                        type="text"
+                        name="qualification"
+                        placeholder="e.g. MBBS, MD"
+                        required
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block font-semibold mb-2">
+                        Experience
+                    </label>
+
+                    <input
+                        type="number"
+                        name="experience"
+                        placeholder="Years of experience"
+                        required
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                </div>
+
+                <div class="mb-4">
+                    <label class="block font-semibold mb-2">
+                        Consultation Fee
+                    </label>
+
+                    <input
+                        type="number"
+                        name="consultationFee"
+                        placeholder="Enter consultation fee"
+                        required
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2">
+                </div>
+
+                <div class="mb-6">
+                    <label class="block font-semibold mb-2">
+                        About
+                    </label>
+
+                    <textarea
+                        name="about"
+                        rows="4"
+                        placeholder="Tell patients about yourself"
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2"></textarea>
+                </div>
+
+                <button
+                    type="submit"
+                    class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700">
+                    Create Profile
+                </button>
+
+            </form>
+
+        <% } %>
+
+    </div>
+
+</div>
+
+<%- include("../partials/footer") %>

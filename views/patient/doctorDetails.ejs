@@ -1,0 +1,184 @@
+<%- include("./partials/patientHeader", { pageTitle: "Doctor Profile | MediQueue" }) %>
+
+    <main class="flex-1 w-full">
+        <div class="max-w-5xl mx-auto px-6 py-10">
+
+            <!-- Back Navigation -->
+            <a href="/patients/doctors"
+                class="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-800 transition">
+                <span>←</span>
+                Back to Doctors
+            </a>
+
+            <!-- Doctor Profile Header -->
+            <section class="mt-6 bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+
+                <div class="flex flex-col sm:flex-row sm:items-center gap-5">
+
+                    <div
+                        class="w-20 h-20 rounded-2xl bg-indigo-100 text-indigo-700 flex items-center justify-center text-3xl font-bold shrink-0">
+                        <%= doctor.user?.name ? doctor.user.name.charAt(0).toUpperCase() : "D" %>
+                    </div>
+
+                    <div>
+                        <p class="text-sm font-semibold text-indigo-600">
+                            DOCTOR PROFILE
+                        </p>
+
+                        <h1 class="text-3xl font-extrabold text-slate-900 mt-1">
+                            Dr. <%= doctor.user?.name || "Doctor" %>
+                        </h1>
+
+                        <p class="text-lg text-slate-600 mt-2">
+                            <%= doctor.specialization %>
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
+
+                    <div class="rounded-xl bg-slate-50 border border-slate-100 p-4">
+                        <p class="text-sm text-slate-500">Qualification</p>
+                        <p class="font-semibold text-slate-800 mt-1">
+                            <%= doctor.qualification %>
+                        </p>
+                    </div>
+
+                    <div class="rounded-xl bg-slate-50 border border-slate-100 p-4">
+                        <p class="text-sm text-slate-500">Experience</p>
+                        <p class="font-semibold text-slate-800 mt-1">
+                            <%= doctor.experience %> years
+                        </p>
+                    </div>
+
+                    <div class="rounded-xl bg-slate-50 border border-slate-100 p-4">
+                        <p class="text-sm text-slate-500">Consultation Fee</p>
+                        <p class="font-semibold text-slate-800 mt-1">
+                            ₹<%= doctor.consultationFee %>
+                        </p>
+                    </div>
+
+                </div>
+
+            </section>
+
+            <!-- About Doctor -->
+            <section class="mt-6 bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+
+                <h2 class="text-xl font-bold text-slate-900">
+                    About the Doctor
+                </h2>
+
+                <p class="text-slate-600 mt-3 leading-7">
+                    <%= doctor.about || "No additional information has been provided by this doctor yet." %>
+                </p>
+
+            </section>
+
+            <!-- Availability -->
+            <section class="mt-6 bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+
+                <h2 class="text-xl font-bold text-slate-900">
+                    Availability
+                </h2>
+
+                <p class="text-slate-500 mt-2 mb-6">
+                    Choose a working day to view the available appointment slots.
+                </p>
+
+                <% if (doctor.availability && doctor.availability.length> 0) { %>
+
+                    <div class="space-y-4">
+
+                        <% doctor.availability.forEach((schedule)=> { %>
+
+                            <div
+                                class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition-shadow">
+
+                                <!-- Day and working hours -->
+                                <div class="flex items-start gap-4">
+
+                                    <div
+                                        class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-50 text-blue-600">
+                                        <i class="fa-regular fa-calendar text-xl"></i>
+                                    </div>
+
+                                    <div>
+                                        <h3 class="text-lg font-semibold text-slate-800">
+                                            <%= schedule.day %>
+                                        </h3>
+
+                                        <p class="mt-1 text-sm text-slate-500">
+                                            Working hours
+                                        </p>
+
+                                        <div class="mt-3 flex flex-wrap items-center gap-2 text-sm">
+
+                                            <span
+                                                class="rounded-lg bg-slate-100 px-3 py-1.5 font-medium text-slate-700">
+                                                <%= schedule.startTime %>
+                                            </span>
+
+                                            <span class="text-slate-400">to</span>
+
+                                            <span
+                                                class="rounded-lg bg-slate-100 px-3 py-1.5 font-medium text-slate-700">
+                                                <%= schedule.endTime %>
+                                            </span>
+
+                                        </div>
+
+                                        <% if (schedule.breakStart && schedule.breakEnd) { %>
+                                            <p class="mt-3 flex items-center gap-2 text-sm text-amber-700">
+                                                <i class="fa-regular fa-clock"></i>
+                                                Break: <%= schedule.breakStart %> – <%= schedule.breakEnd %>
+                                            </p>
+                                            <% } %>
+
+                                    </div>
+                                </div>
+
+                                <!-- View slots button -->
+                                <div class="sm:shrink-0">
+
+                                    <a href="/patients/doctors/<%= doctor._id %>/availability/<%= encodeURIComponent(schedule.day) %>"
+                                        class="inline-flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+
+                                        View Available Slots
+                                        <i class="fa-solid fa-arrow-right"></i>
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                            <% }) %>
+
+                    </div>
+
+                    <% } else { %>
+
+                        <div class="mt-5 rounded-xl bg-slate-50 border border-slate-200 p-5">
+                            <p class="text-slate-600">
+                                Availability has not been added yet.
+                            </p>
+                        </div>
+
+                        <% } %>
+
+            </section>
+
+            <!-- Back Button -->
+            <div class="mt-8">
+                <a href="/patients/doctors"
+                    class="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition">
+                    ← Back to Doctors
+                </a>
+            </div>
+
+        </div>
+    </main>
+
+    <%- include("../partials/footer") %>
