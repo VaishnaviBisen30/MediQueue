@@ -1,6 +1,7 @@
 const express = require("express");
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
+const doctorApprovalMiddleware = require("../middleware/doctorApprovalMiddleware");
 const Doctor = require("../models/Doctor");
 const generateSlots = require("../utils/slotGenerator");
 const Notification = require("../models/Notification");
@@ -12,6 +13,7 @@ router.get(
   "/dashboard",
   authMiddleware,
   roleMiddleware("doctor"),
+  doctorApprovalMiddleware,
   async (req, res) => {
     try {
       const doctor = await Doctor.findOne({
@@ -101,11 +103,15 @@ router.get(
   "/availability",
   authMiddleware,
   roleMiddleware("doctor"),
+  doctorApprovalMiddleware,
   async (req, res) => {
     try {
       const doctor = await Doctor.findOne({
         user: req.session.userId,
       });
+      if (!doctor) {
+        return res.redirect("/doctors/profile");
+      }
       res.render("doctor/availability", { doctor });
     } catch (error) {
       console.error(error);
@@ -118,6 +124,7 @@ router.get(
   "/notifications",
   authMiddleware,
   roleMiddleware("doctor"),
+  doctorApprovalMiddleware,
   async (req, res) => {
     try {
       const doctor = await Doctor.findOne({
@@ -146,6 +153,7 @@ router.get(
   "/availability/saved",
   authMiddleware,
   roleMiddleware("doctor"),
+  doctorApprovalMiddleware,
   async (req, res) => {
     try {
       const doctor = await Doctor.findOne({
@@ -170,6 +178,7 @@ router.get(
   "/availability/:day/slots",
   authMiddleware,
   roleMiddleware("doctor"),
+  doctorApprovalMiddleware,
   async (req, res) => {
     try {
       const doctor = await Doctor.findOne({
@@ -227,6 +236,7 @@ router.post(
   "/availability",
   authMiddleware,
   roleMiddleware("doctor"),
+  doctorApprovalMiddleware,
   async (req, res) => {
     try {
       const { day, startTime, endTime, breakStart, breakEnd } = req.body;
@@ -283,6 +293,7 @@ router.post(
   "/availability/:id/delete",
   authMiddleware,
   roleMiddleware("doctor"),
+  doctorApprovalMiddleware,
   async (req, res) => {
     try {
       const doctor = await Doctor.findOne({
@@ -373,6 +384,7 @@ router.get(
   "/appointments",
   authMiddleware,
   roleMiddleware("doctor"),
+  doctorApprovalMiddleware,
   async (req, res) => {
     try {
       // Find the logged-in doctor's profile
@@ -400,9 +412,45 @@ router.get(
 );
 
 router.post(
+  "/appointments/:id/complete",
+  authMiddleware,
+  roleMiddleware("doctor"),
+  doctorApprovalMiddleware,
+  async (req, res) => {
+    try {
+      const doctor = await Doctor.findOne({ user: req.session.userId });
+      if (!doctor) {
+        return res.status(404).send("Doctor profile not found.");
+      }
+      const appointment = await Appointment.findOne({
+        _id: req.params.id,
+        doctor: doctor._id,
+        status: "booked",
+      });
+      if (!appointment) {
+        return res
+          .status(404)
+          .send("Appointment not found or cannot be marked as completed.");
+      }
+      appointment.status = "completed";
+      await appointment.save();
+      return res.redirect("/doctors/appointments");
+    } catch (error) {
+      console.error("Error marking appointment as completed:", error);
+      return res
+        .status(500)
+        .send(
+          "Something went wrong while marking the appointment as completed.",
+        );
+    }
+  },
+);
+
+router.post(
   "/appointments/:id/cancel",
   authMiddleware,
   roleMiddleware("doctor"),
+  doctorApprovalMiddleware,
   async (req, res) => {
     try {
       // Find the logged-in doctor's profile

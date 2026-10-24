@@ -9,6 +9,12 @@ const doctorSchema = new mongoose.Schema(
       unique: true,
     },
 
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
+    },
+
     specialization: {
       type: String,
       required: true,

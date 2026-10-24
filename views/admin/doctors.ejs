@@ -1,0 +1,106 @@
+<%- include("partials/adminHeader", { pageTitle: "Manage Doctors | MediQueue" }) %>
+
+    <main class="flex-1 w-full">
+        <div class="max-w-6xl mx-auto px-6 py-10">
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Manage Doctors</h1>
+                    <p class="text-gray-500 mt-2">
+                        Review doctor profiles and manage approval requests.
+                    </p>
+                </div>
+
+                <a href="/admin/dashboard"
+                    class="inline-block px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100">
+                    Back to Dashboard
+                </a>
+            </div>
+
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
+                <% if (doctors.length===0) { %>
+                    <div class="p-8 text-center">
+                        <h2 class="text-lg font-semibold text-gray-700">No doctor profiles found</h2>
+                        <p class="text-gray-500 mt-2">
+                            Doctor profiles will appear here when they are created.
+                        </p>
+                    </div>
+                    <% } else { %>
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-50 border-b border-gray-200">
+                                <tr>
+                                    <th class="px-6 py-4 text-sm font-semibold text-gray-600">Doctor</th>
+                                    <th class="px-6 py-4 text-sm font-semibold text-gray-600">Specialization</th>
+                                    <th class="px-6 py-4 text-sm font-semibold text-gray-600">Qualification</th>
+                                    <th class="px-6 py-4 text-sm font-semibold text-gray-600">Status</th>
+                                    <th class="px-6 py-4 text-sm font-semibold text-gray-600">Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody class="divide-y divide-gray-200">
+                                <% doctors.forEach((doctor)=> { %>
+                                    <% const status=doctor.status || "pending" ; %>
+
+                                        <tr>
+                                            <td class="px-6 py-4">
+                                                <p class="font-medium text-gray-800">
+                                                    <%= doctor.user ? doctor.user.name : "Unknown" %>
+                                                </p>
+                                                <p class="text-sm text-gray-500">
+                                                    <%= doctor.user ? doctor.user.email : "No email" %>
+                                                </p>
+                                            </td>
+
+                                            <td class="px-6 py-4 text-gray-700">
+                                                <%= doctor.specialization %>
+                                            </td>
+
+                                            <td class="px-6 py-4 text-gray-700">
+                                                <%= doctor.qualification %>
+                                            </td>
+
+                                            <!-- Status column -->
+                                            <td class="px-6 py-4">
+                                                <span class="px-3 py-1 rounded-full text-sm
+                                        <%= status === 'approved'
+                                            ? 'bg-green-100 text-green-700'
+                                            : status === 'rejected'
+                                            ? 'bg-red-100 text-red-700'
+                                            : 'bg-yellow-100 text-yellow-700' %>">
+                                                    <%= status.charAt(0).toUpperCase() + status.slice(1) %>
+                                                </span>
+                                            </td>
+
+                                            <!-- Actions column -->
+                                            <td class="px-6 py-4">
+                                                <div class="flex flex-wrap gap-2">
+                                                    <% if (status==="pending" ) { %>
+                                                        <form action="/admin/doctors/<%= doctor._id %>/approve"
+                                                            method="POST">
+                                                            <button type="submit"
+                                                                class="px-3 py-2 rounded-lg bg-green-600 text-white text-sm hover:bg-green-700">
+                                                                Approve
+                                                            </button>
+                                                        </form>
+
+                                                        <form action="/admin/doctors/<%= doctor._id %>/reject"
+                                                            method="POST">
+                                                            <button type="submit"
+                                                                class="px-3 py-2 rounded-lg bg-red-600 text-white text-sm hover:bg-red-700">
+                                                                Reject
+                                                            </button>
+                                                        </form>
+                                                        <% } else { %>
+                                                            <span class="text-sm text-gray-400">—</span>
+                                                            <% } %>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <% }); %>
+                            </tbody>
+                        </table>
+                        <% } %>
+            </div>
+        </div>
+    </main>
+
+    <%- include("../partials/footer") %>
