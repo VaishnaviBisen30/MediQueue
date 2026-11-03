@@ -4,34 +4,51 @@
         <div class="max-w-6xl mx-auto px-6 py-10">
 
             <!-- Page Heading -->
-            <section class="mb-8">
-                <p class="text-sm font-semibold text-indigo-600">
-                    PATIENT PORTAL
+            <section class="mb-10">
+                <p class="text-sm font-bold tracking-widest text-indigo-600 uppercase">
+                    Patient Portal
                 </p>
 
                 <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2">
                     Find a Doctor
                 </h1>
 
-                <p class="text-slate-500 mt-3">
-                    Explore doctor profiles and find the right specialist for you.
+                <p class="text-slate-500 mt-3 max-w-2xl leading-relaxed">
+                    Explore doctor profiles, learn about their expertise, and find
+                    the right specialist for your healthcare needs.
                 </p>
             </section>
 
             <!-- Empty State -->
             <% if (doctors.length===0) { %>
 
-                <div class="bg-white border border-slate-200 rounded-2xl p-10 text-center">
-                    <h2 class="text-xl font-bold text-slate-800">
+                <div class="bg-white border border-slate-200 rounded-2xl px-6 py-14 text-center shadow-sm">
+                    <div
+                        class="w-16 h-16 mx-auto rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-3xl">
+                        +
+                    </div>
+
+                    <h2 class="text-xl font-bold text-slate-800 mt-5">
                         No doctors available yet
                     </h2>
 
                     <p class="text-slate-500 mt-2">
-                        Please check back later.
+                        Please check back later for available doctors.
                     </p>
                 </div>
 
                 <% } else { %>
+
+                    <!-- Doctor Count -->
+                    <div class="flex items-center justify-between mb-5">
+                        <h2 class="text-lg font-bold text-slate-800">
+                            Available Doctors
+                        </h2>
+
+                        <span class="text-sm text-slate-500">
+                            <%= doctors.length %> doctor<%= doctors.length===1 ? "" : "s" %>
+                        </span>
+                    </div>
 
                     <!-- Doctor Cards -->
                     <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -39,55 +56,73 @@
                         <% doctors.forEach(doctor=> { %>
 
                             <article
-                                class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all">
+                                class="group flex flex-col bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-lg hover:border-indigo-200 transition-all duration-300">
 
-                                <div
-                                    class="w-14 h-14 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl font-bold">
-                                    <%= doctor.user?.name ? doctor.user.name.charAt(0).toUpperCase() : "D" %>
+                                <!-- Doctor Initial and Name -->
+                                <div class="flex items-center gap-4">
+                                    <div
+                                        class="w-14 h-14 shrink-0 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl font-extrabold">
+                                        <%= doctor.user?.name ? doctor.user.name.charAt(0).toUpperCase() : "D" %>
+                                    </div>
+
+                                    <div class="min-w-0">
+                                        <h3 class="text-lg font-bold text-slate-900 break-words">
+                                            Dr. <%= doctor.user?.name || "Doctor" %>
+                                        </h3>
+
+                                        <p class="text-sm font-semibold text-indigo-600 mt-1">
+                                            <%= doctor.specialization %>
+                                        </p>
+                                    </div>
                                 </div>
 
-                                <h2 class="text-xl font-bold text-slate-900 mt-4">
-                                    Dr. <%= doctor.user?.name || "Doctor" %>
-                                </h2>
+                                <!-- Doctor Details -->
+                                <div class="mt-6 space-y-4 text-sm">
 
-                                <p class="text-indigo-600 font-semibold mt-1">
-                                    <%= doctor.specialization %>
-                                </p>
+                                    <div>
+                                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                                            Qualification
+                                        </p>
+                                        <p class="text-slate-700 font-medium mt-1">
+                                            <%= doctor.qualification %>
+                                        </p>
+                                    </div>
 
-                                <div class="mt-5 space-y-3 text-sm text-slate-600">
+                                    <div>
+                                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                                            Experience
+                                        </p>
+                                        <p class="text-slate-700 font-medium mt-1">
+                                            <%= doctor.experience %> years
+                                        </p>
+                                    </div>
 
-                                    <p>
-                                        <span class="font-semibold text-slate-800">Qualification:</span>
-                                        <%= doctor.qualification %>
-                                    </p>
-
-                                    <p>
-                                        <span class="font-semibold text-slate-800">Experience:</span>
-                                        <%= doctor.experience %> years
-                                    </p>
-
-                                    <p>
-                                        <span class="font-semibold text-slate-800">Consultation fee:</span>
-                                        ₹<%= doctor.consultationFee %>
-                                    </p>
+                                    <div class="bg-indigo-50 rounded-xl p-4">
+                                        <p class="text-xs font-semibold uppercase tracking-wide text-indigo-500">
+                                            Consultation Fee
+                                        </p>
+                                        <p class="text-xl font-extrabold text-indigo-700 mt-1">
+                                            ₹<%= doctor.consultationFee %>
+                                        </p>
+                                    </div>
 
                                 </div>
 
+                                <!-- About -->
                                 <% if (doctor.about) { %>
-                                    <p class="text-sm text-slate-500 mt-4 leading-relaxed">
+                                    <p class="text-sm text-slate-500 mt-5 leading-relaxed">
                                         <%= doctor.about %>
                                     </p>
                                     <% } %>
 
-
-                                        <div class="mt-6 pt-4 border-t border-slate-100">
+                                        <!-- View Profile -->
+                                        <div class="mt-auto pt-6">
                                             <a href="/patients/doctors/<%= doctor._id %>"
-                                                class="inline-flex items-center justify-center w-full rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 transition">
+                                                class="inline-flex items-center justify-center gap-2 w-full rounded-xl bg-indigo-600 px-4 py-3 text-sm font-semibold text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-200">
                                                 View Profile
-                                                <span class="ml-2">→</span>
+                                                <span aria-hidden="true">→</span>
                                             </a>
                                         </div>
-
 
                             </article>
 

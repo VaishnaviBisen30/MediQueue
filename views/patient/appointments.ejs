@@ -1,95 +1,204 @@
 <%- include("./partials/patientHeader", { pageTitle: "My Appointments | MediQueue" }) %>
 
-  <main class="flex-1 max-w-6xl mx-auto w-full px-6 py-10">
+  <main class="flex-1 w-full">
+    <div class="max-w-6xl mx-auto px-6 py-10">
 
-    <div class="mb-8">
-      <h1 class="text-3xl font-bold text-slate-800">
-        My Appointments
-      </h1>
-      <p class="text-slate-600 mt-2">
-        View and track your booked doctor appointments.
-      </p>
-    </div>
-
-    <% if (appointments.length===0) { %>
-
-      <div class="bg-white border border-slate-200 rounded-2xl p-10 text-center">
-        <h2 class="text-xl font-semibold text-slate-800">
-          No appointments yet
-        </h2>
-        <p class="text-slate-500 mt-2">
-          You haven't booked any appointments yet.
+      <!-- Page Heading -->
+      <section class="mb-10">
+        <p class="text-sm font-bold tracking-widest text-indigo-600 uppercase">
+          Patient Portal
         </p>
-        <a href="/patients/doctors"
-          class="inline-block mt-6 rounded-xl bg-blue-600 px-5 py-2 text-white font-semibold hover:bg-blue-700">
-          Browse Doctors
-        </a>
-      </div>
 
-      <% } else { %>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mt-2">
+          My Appointments
+        </h1>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <p class="text-slate-500 mt-3 max-w-2xl leading-relaxed">
+          View your appointment details, track their status, and manage your upcoming visits.
+        </p>
+      </section>
 
-          <% appointments.forEach((appointment)=> { %>
+      <% if (appointments.length===0) { %>
 
-            <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+        <!-- Empty State -->
+        <section class="bg-white border border-slate-200 rounded-2xl px-6 py-14 text-center shadow-sm">
 
-              <div class="flex items-start justify-between gap-4">
-                <div>
-                  <h2 class="text-lg font-bold text-slate-800">
-                    Dr. <%= appointment.doctor?.user?.name || "Doctor" %>
-                  </h2>
-                  <p class="text-sm text-slate-500 mt-1">
-                    <%= appointment.doctor?.specialization || "Specialization unavailable" %>
-                  </p>
+          <div
+            class="w-16 h-16 mx-auto rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-3xl">
+            +
+          </div>
+
+          <h2 class="text-xl font-bold text-slate-800 mt-5">
+            No appointments yet
+          </h2>
+
+          <p class="text-slate-500 mt-2 max-w-md mx-auto leading-relaxed">
+            You haven't booked any appointments yet. Find a doctor and schedule your first visit.
+          </p>
+
+          <a href="/patients/doctors"
+            class="inline-flex items-center justify-center gap-2 mt-6 rounded-xl bg-indigo-600 px-6 py-3 text-white text-sm font-semibold hover:bg-indigo-700 transition-colors">
+            Browse Doctors
+            <span aria-hidden="true">→</span>
+          </a>
+
+        </section>
+
+        <% } else { %>
+
+          <!-- Appointment Count -->
+          <div class="flex items-center justify-between mb-5">
+            <h2 class="text-lg font-bold text-slate-800">
+              Your Bookings
+            </h2>
+
+            <span class="rounded-full bg-indigo-50 text-indigo-700 px-3 py-1 text-sm font-semibold">
+              <%= appointments.length %> appointment<%= appointments.length===1 ? "" : "s" %>
+            </span>
+          </div>
+
+          <!-- Appointment Cards -->
+          <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <% appointments.forEach((appointment)=> { %>
+
+              <article
+                class="flex flex-col bg-white border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-indigo-200 transition-all duration-300">
+
+                <!-- Doctor and Status -->
+                <div class="flex items-start justify-between gap-4">
+
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div
+                      class="w-12 h-12 shrink-0 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-lg font-extrabold">
+                      <%= appointment.doctor?.user?.name ? appointment.doctor.user.name.charAt(0).toUpperCase() : "D" %>
+                    </div>
+
+                    <div class="min-w-0">
+                      <h3 class="text-lg font-bold text-slate-900 break-words">
+                        Dr. <%= appointment.doctor?.user?.name || "Doctor" %>
+                      </h3>
+
+                      <p class="text-sm text-indigo-600 font-medium mt-1">
+                        <%= appointment.doctor?.specialization || "Specialization unavailable" %>
+                      </p>
+                    </div>
+                  </div>
+
+                  <span class="shrink-0 rounded-full px-3 py-1.5 text-xs font-bold
+                                <%= appointment.status === 'booked'
+                                    ? 'bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-200'
+                                    : appointment.status === 'completed'
+                                    ? 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-200'
+                                    : 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-200' %>">
+
+                    <%= appointment.status==='booked' ? 'Booked' : appointment.status==='completed' ? 'Completed' :
+                      appointment.cancelledBy==='patient' ? 'Cancelled by you' : appointment.cancelledBy==='doctor'
+                      ? 'Cancelled by doctor' : 'Cancelled' %>
+
+                  </span>
+
                 </div>
 
+                <!-- Appointment Details -->
+                <div class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-                <span class="rounded-full px-3 py-1 text-xs font-semibold
-                  <%= appointment.status === 'booked'
-                    ? 'bg-blue-100 text-blue-700'
-                    : appointment.status === 'completed'
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-red-100 text-red-700' %>">
-                  <%= appointment.status==='booked' ? 'Booked' : appointment.status==='completed' ? 'Completed' :
-                    appointment.cancelledBy==='patient' ? 'Cancelled by you' : appointment.cancelledBy==='doctor'
-                    ? 'Cancelled by doctor' : 'Cancelled' %>
-                </span>
+                  <div class="rounded-xl bg-slate-50 border border-slate-100 p-4">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                      Appointment Date
+                    </p>
 
-              </div>
+                    <p class="text-sm font-bold text-slate-800 mt-2">
+                      <%= appointment.date %>
+                    </p>
+                  </div>
 
-              <div class="mt-5 space-y-3 text-sm text-slate-600">
+                  <div class="rounded-xl bg-slate-50 border border-slate-100 p-4">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                      Appointment Time
+                    </p>
 
-                <p>
-                  <strong class="text-slate-800">Date:</strong>
-                  <%= appointment.date %>
-                </p>
+                    <p class="text-sm font-bold text-slate-800 mt-2">
+                      <%= appointment.startTime %> – <%= appointment.endTime %>
+                    </p>
+                  </div>
 
-                <p>
-                  <strong class="text-slate-800">Time:</strong>
-                  <%= appointment.startTime %> – <%= appointment.endTime %>
-                </p>
+                </div>
 
-              </div>
+                <!-- Appointment Actions -->
+                <% if (appointment.status==="booked" ) { %>
 
-              <% if (appointment.status==="booked" ) { %>
-                <form action="/patients/appointments/<%= appointment._id %>/cancel" method="POST" class="mt-6"
-                  onsubmit="return confirm('Are you sure you want to cancel this appointment?');">
-                  <button type="submit"
-                    class="w-full rounded-xl bg-red-500 px-5 py-2.5 text-white font-semibold hover:bg-red-600 transition">
-                    Cancel Appointment
-                  </button>
-                </form>
-                <% } %>
+                  <div class="mt-auto pt-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
 
-            </div>
+                    <!-- Reschedule Button -->
+                    <a href="/patients/appointments/<%= appointment._id %>/reschedule" class="w-full inline-flex items-center justify-center gap-2 rounded-xl
+             bg-indigo-50 border border-indigo-200 px-5 py-3
+             text-sm font-semibold text-indigo-600
+             hover:bg-indigo-600 hover:text-white hover:border-indigo-600
+             active:scale-[0.98]
+             focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2
+             transition-all duration-200">
 
-            <% }) %>
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                          d="M16 2v4m0 0 4-4m-4 4h4M8 22v-4m0 0-4 4m4-4H4M4 12a8 8 0 0 1 13.66-5.66M20 12a8 8 0 0 1-13.66 5.66" />
+                      </svg>
 
-        </div>
+                      Reschedule
+                    </a>
 
-        <% } %>
+                    <!-- Cancel Button -->
+                    <form action="/patients/appointments/<%= appointment._id %>/cancel" method="POST"
+                      onsubmit="return confirm('Are you sure you want to cancel this appointment?');">
 
+                      <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-xl
+               bg-red-50 border border-red-200 px-5 py-3
+               text-sm font-semibold text-red-600
+               hover:bg-red-600 hover:text-white hover:border-red-600
+               active:scale-[0.98]
+               focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2
+               transition-all duration-200">
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                          stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M6 7h12M9 7V4h6v3m-8 0 1 13h8l1-13M10 11v5m4-5v5" />
+                        </svg>
+
+                        Cancel Appointment
+                      </button>
+                    </form>
+
+                  </div>
+
+                  <% } else if (appointment.status==="completed" ) { %>
+
+                    <div class="mt-auto pt-6">
+                      <p class="rounded-xl bg-green-50 px-4 py-3 text-sm font-medium text-green-700">
+                        This appointment has been completed.
+                      </p>
+                    </div>
+
+                    <% } else if (appointment.status==="cancelled" ) { %>
+
+                      <div class="mt-auto pt-6">
+                        <p class="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-700">
+                          This appointment is no longer active.
+                        </p>
+                      </div>
+
+                      <% } %>
+
+              </article>
+
+              <% }) %>
+
+          </section>
+
+          <% } %>
+
+    </div>
   </main>
 
   <%- include("../partials/footer") %>

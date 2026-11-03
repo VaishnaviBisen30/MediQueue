@@ -20,8 +20,14 @@ router.get(
         user: req.session.userId,
       });
 
+      const unreadNotifications = await Notification.countDocuments({
+        doctor: doctor._id,
+        isRead: false,
+      });
+
       res.render("doctor/dashboard", {
         availability: doctor ? doctor.availability : [],
+        unreadNotifications,
       });
     } catch (error) {
       console.error(error);
@@ -321,7 +327,7 @@ router.post(
 );
 
 router.get(
-  "/notifications/test",
+  "/notifications",
   authMiddleware,
   roleMiddleware("doctor"),
   async (req, res) => {
@@ -334,13 +340,13 @@ router.get(
         return res.redirect("/doctors/profile");
       }
 
-      await Notification.create({
+      const notifications = await Notification.find({
         doctor: doctor._id,
-        message: "This is a test notification.",
-        type: "general",
-      });
+      }).sort({ createdAt: -1 });
 
-      res.redirect("/doctors/notifications");
+      res.render("doctor/notifications", {
+        notifications,
+      });
     } catch (error) {
       console.error(error);
       res.status(500).send("Something went wrong");
@@ -479,6 +485,19 @@ router.post(
       appointment.status = "cancelled";
       appointment.cancelledBy = "doctor";
       await appointment.save();
+
+      await Notification.create([
+        {
+          patient: appointment.patient,
+          message: `Your appointment on ${appointment.date} at ${appointment.startTime} has been cancelled by the doctor.`,
+          type: "appointment",
+        },
+        {
+          doctor: appointment.doctor,
+          message: `You cancelled the appointment scheduled on ${appointment.date} at ${appointment.startTime}.`,
+          type: "appointment",
+        },
+      ]);
 
       // Return to the doctor's appointments page
       return res.redirect("/doctors/appointments");

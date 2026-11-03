@@ -1,0 +1,79 @@
+<%- include("partials/adminHeader", { pageTitle: "Manage Patients | MediQueue" }) %>
+
+    <main class="flex-1 w-full">
+        <div class="max-w-6xl mx-auto px-6 py-10">
+
+            <!-- Page Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-8">
+                <div>
+                    <h1 class="text-3xl font-bold text-gray-800">Manage Patients</h1>
+                    <p class="text-gray-500 mt-2">
+                        View and manage registered patient accounts.
+                    </p>
+                </div>
+
+                <a href="/admin/dashboard"
+                    class="inline-block px-5 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100">
+                    Back to Dashboard
+                </a>
+            </div>
+
+            <!-- Patients Table -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-x-auto">
+
+                <% if (patients.length===0) { %>
+                    <div class="p-8 text-center">
+                        <h2 class="text-lg font-semibold text-gray-700">
+                            No patients found
+                        </h2>
+                        <p class="text-gray-500 mt-2">
+                            Registered patient accounts will appear here.
+                        </p>
+                    </div>
+                    <% } else { %>
+
+                        <table class="w-full text-left">
+                            <thead class="bg-gray-50 border-b border-gray-200">
+                                <tr>
+                                    <th class="px-6 py-4 text-sm font-semibold text-gray-600">
+                                        Patient
+                                    </th>
+                                    <th class="px-6 py-4 text-sm font-semibold text-gray-600">
+                                        Email
+                                    </th>
+                                    <th class="px-6 py-4 text-sm font-semibold text-gray-600">
+                                        Registered On
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody class="divide-y divide-gray-200">
+                                <% patients.forEach((patient)=> { %>
+                                    <tr>
+                                        <td class="px-6 py-4">
+                                            <p class="font-medium text-gray-800">
+                                                <%= patient.name %>
+                                            </p>
+                                        </td>
+
+                                        <td class="px-6 py-4 text-gray-700">
+                                            <%= patient.email %>
+                                        </td>
+
+                                        <td class="px-6 py-4 text-gray-700">
+                                            <%= patient.createdAt ? new
+                                                Date(patient.createdAt).toLocaleDateString("en-IN", { day: "2-digit" ,
+                                                month: "short" , year: "numeric" }) : "N/A" %>
+                                        </td>
+                                    </tr>
+                                    <% }); %>
+                            </tbody>
+                        </table>
+
+                        <% } %>
+            </div>
+
+        </div>
+    </main>
+
+    <%- include("../partials/footer") %>
