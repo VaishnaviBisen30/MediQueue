@@ -15,16 +15,19 @@ router.post("/register", async (req, res) => {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      return res.send("All fields are required");
+      req.session.alert = "All fields are required";
+      return res.redirect("/register");
     }
 
     if (password.length < 6) {
-      return res.send("Password must be at least 6 characters");
+      req.session.alert = "Password must be at least 6 characters";
+      return res.redirect("/register");
     }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-      return res.send("Email already registered");
+      req.session.alert = "Email already registered";
+      return res.redirect("/register");
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -53,12 +56,14 @@ router.post("/login", async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.send("Invalid email or password");
+      req.session.alert = "Invalid email or password";
+      return res.redirect("/login");
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.send("Invalid email or password");
+      req.session.alert = "Invalid email or password";
+      return res.redirect("/login");
     }
 
     req.session.userId = user._id; // Store user ID in session

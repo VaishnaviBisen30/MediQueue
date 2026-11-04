@@ -12,10 +12,16 @@ const doctorApprovalMiddleware = async (req, res, next) => {
     }
 
     // If the profile is not approved, deny access
-    if (doctor.status !== "approved") {
+    if (doctor.status === "pending") {
       return res
         .status(403)
         .send("Your doctor profile is awaiting admin approval.");
+    }
+
+    if (doctor.status === "rejected") {
+      return res
+        .status(403)
+        .send("Your doctor profile has been rejected. Please contact support.");
     }
 
     // Allow the request to continue

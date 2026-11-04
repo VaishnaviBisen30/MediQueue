@@ -29,6 +29,13 @@ const appointmentSchema = new mongoose.Schema(
       required: true,
     },
 
+    reasonForVisit: {
+      type: String,
+      trim: true,
+      maxlength: 500,
+      default: "",
+    },
+
     status: {
       type: String,
       enum: ["booked", "cancelled", "completed"],

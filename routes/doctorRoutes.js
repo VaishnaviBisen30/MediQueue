@@ -1,13 +1,19 @@
 const express = require("express");
+
 const authMiddleware = require("../middleware/authMiddleware");
 const roleMiddleware = require("../middleware/roleMiddleware");
 const doctorApprovalMiddleware = require("../middleware/doctorApprovalMiddleware");
+
 const Doctor = require("../models/Doctor");
 const generateSlots = require("../utils/slotGenerator");
 const Notification = require("../models/Notification");
 const Appointment = require("../models/Appointment");
 
 const router = express.Router();
+
+// ======================
+// DOCTOR DASHBOARD
+// ======================
 
 router.get(
   "/dashboard",
@@ -20,13 +26,17 @@ router.get(
         user: req.session.userId,
       });
 
+      if (!doctor) {
+        return res.redirect("/doctors/profile");
+      }
+
       const unreadNotifications = await Notification.countDocuments({
         doctor: doctor._id,
         isRead: false,
       });
 
       res.render("doctor/dashboard", {
-        availability: doctor ? doctor.availability : [],
+        availability: doctor.availability,
         unreadNotifications,
       });
     } catch (error) {
@@ -35,6 +45,10 @@ router.get(
     }
   },
 );
+
+// ======================
+// DOCTOR PROFILE
+// ======================
 
 router.get(
   "/profile",
@@ -105,6 +119,10 @@ router.post(
   },
 );
 
+// ======================
+// DOCTOR AVAILABILITY
+// ======================
+
 router.get(
   "/availability",
   authMiddleware,
@@ -115,39 +133,12 @@ router.get(
       const doctor = await Doctor.findOne({
         user: req.session.userId,
       });
+
       if (!doctor) {
         return res.redirect("/doctors/profile");
       }
+
       res.render("doctor/availability", { doctor });
-    } catch (error) {
-      console.error(error);
-      res.status(500).send("Something went wrong");
-    }
-  },
-);
-
-router.get(
-  "/notifications",
-  authMiddleware,
-  roleMiddleware("doctor"),
-  doctorApprovalMiddleware,
-  async (req, res) => {
-    try {
-      const doctor = await Doctor.findOne({
-        user: req.session.userId,
-      });
-
-      if (!doctor) {
-        return res.redirect("/doctors/profile");
-      }
-
-      const notifications = await Notification.find({
-        doctor: doctor._id,
-      }).sort({ createdAt: -1 });
-
-      res.render("doctor/notifications", {
-        notifications,
-      });
     } catch (error) {
       console.error(error);
       res.status(500).send("Something went wrong");
@@ -246,6 +237,7 @@ router.post(
   async (req, res) => {
     try {
       const { day, startTime, endTime, breakStart, breakEnd } = req.body;
+
       if (startTime >= endTime) {
         return res.send("End time must be after start time");
       }
@@ -267,7 +259,10 @@ router.post(
           return res.send("Break must be within working hours");
         }
       }
-      const doctor = await Doctor.findOne({ user: req.session.userId });
+
+      const doctor = await Doctor.findOne({
+        user: req.session.userId,
+      });
 
       if (!doctor) {
         return res.status(404).send("Doctor profile not found");
@@ -286,7 +281,9 @@ router.post(
         breakStart,
         breakEnd,
       });
+
       await doctor.save();
+
       res.redirect("/doctors/availability/saved");
     } catch (error) {
       console.error(error);
@@ -310,8 +307,7 @@ router.post(
         return res.status(404).send("Doctor profile not found");
       }
 
-      // console.log(req.params.id);
-
+      // Delete availability belonging to this doctor
       doctor.availability = doctor.availability.filter(
         (slot) => slot._id.toString() !== req.params.id,
       );
@@ -326,10 +322,15 @@ router.post(
   },
 );
 
+// ======================
+// DOCTOR NOTIFICATIONS
+// ======================
+
 router.get(
   "/notifications",
   authMiddleware,
   roleMiddleware("doctor"),
+  doctorApprovalMiddleware,
   async (req, res) => {
     try {
       const doctor = await Doctor.findOne({
@@ -358,6 +359,7 @@ router.post(
   "/notifications/:id/read",
   authMiddleware,
   roleMiddleware("doctor"),
+  doctorApprovalMiddleware,
   async (req, res) => {
     try {
       const doctor = await Doctor.findOne({
@@ -385,6 +387,10 @@ router.post(
     }
   },
 );
+
+// ======================
+// DOCTOR APPOINTMENTS
+// ======================
 
 router.get(
   "/appointments",
@@ -424,25 +430,34 @@ router.post(
   doctorApprovalMiddleware,
   async (req, res) => {
     try {
-      const doctor = await Doctor.findOne({ user: req.session.userId });
+      const doctor = await Doctor.findOne({
+        user: req.session.userId,
+      });
+
       if (!doctor) {
         return res.status(404).send("Doctor profile not found.");
       }
+
       const appointment = await Appointment.findOne({
         _id: req.params.id,
         doctor: doctor._id,
         status: "booked",
       });
+
       if (!appointment) {
         return res
           .status(404)
           .send("Appointment not found or cannot be marked as completed.");
       }
+
       appointment.status = "completed";
+
       await appointment.save();
+
       return res.redirect("/doctors/appointments");
     } catch (error) {
       console.error("Error marking appointment as completed:", error);
+
       return res
         .status(500)
         .send(
@@ -484,6 +499,7 @@ router.post(
       // Cancel the appointment
       appointment.status = "cancelled";
       appointment.cancelledBy = "doctor";
+
       await appointment.save();
 
       await Notification.create([
@@ -503,6 +519,7 @@ router.post(
       return res.redirect("/doctors/appointments");
     } catch (error) {
       console.error("Error cancelling appointment:", error);
+
       return res
         .status(500)
         .send("Something went wrong while cancelling the appointment.");

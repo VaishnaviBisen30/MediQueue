@@ -18,6 +18,11 @@
         </p>
       </section>
 
+      <a href="/patients/dashboard"
+        class="inline-flex items-center gap-2 mb-6 text-sm font-semibold text-indigo-600 hover:text-indigo-800 transition">
+        ← Back to Dashboard
+      </a>
+
       <% if (appointments.length===0) { %>
 
         <!-- Empty State -->
@@ -172,13 +177,35 @@
 
                   </div>
 
-                  <% } else if (appointment.status==="completed" ) { %>
+                  <% }else if (appointment.status==="completed" ) { %>
 
-                    <div class="mt-auto pt-6">
+                    <div class="mt-auto pt-6 space-y-3">
+
                       <p class="rounded-xl bg-green-50 px-4 py-3 text-sm font-medium text-green-700">
                         This appointment has been completed.
                       </p>
+
+                      <% if (appointment.hasReview) { %>
+
+                        <div
+                          class="w-full flex items-center justify-center gap-2 rounded-xl bg-slate-100 px-5 py-3 text-sm font-semibold text-green-700">
+                          <i class="fa-solid fa-circle-check"></i>
+                          Review Submitted
+                        </div>
+
+                        <% } else { %>
+
+                          <a href="/patients/appointments/<%= appointment._id %>/review"
+                            class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white hover:bg-indigo-700 transition-all duration-200">
+                            <i class="fa-regular fa-star"></i>
+                            Write a Review
+                          </a>
+
+                          <% } %>
+
                     </div>
+
+
 
                     <% } else if (appointment.status==="cancelled" ) { %>
 

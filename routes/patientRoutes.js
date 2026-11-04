@@ -5,6 +5,7 @@ const Doctor = require("../models/Doctor");
 const generateSlots = require("../utils/slotGenerator");
 const Appointment = require("../models/Appointment");
 const Notification = require("../models/Notification");
+const Review = require("../models/Review");
 
 const router = express.Router();
 
@@ -91,7 +92,7 @@ router.get(
   roleMiddleware("patient"),
   async (req, res) => {
     try {
-      const doctors = await Doctor.find().populate("user", "name email");
+      const doctors = await Doctor.find({ status: "approved" }).populate("user", "name email");
       res.render("patient/doctors", { doctors });
     } catch (error) {
       console.error(error);
@@ -110,10 +111,36 @@ router.get(
         "user",
         "name email",
       );
+
       if (!doctor) {
         return res.status(404).send("Doctor not found");
       }
-      res.render("patient/doctorDetails", { doctor });
+
+      // Fetch all reviews for this doctor
+      const reviews = await Review.find({
+        doctor: doctor._id,
+      })
+        .populate("patient", "name")
+        .sort({ createdAt: -1 });
+
+      // Calculate total number of reviews
+      const totalReviews = reviews.length;
+
+      // Calculate average rating
+      const averageRating =
+        totalReviews > 0
+          ? (
+              reviews.reduce((sum, review) => sum + review.rating, 0) /
+              totalReviews
+            ).toFixed(1)
+          : "0.0";
+
+      res.render("patient/doctorDetails", {
+        doctor,
+        reviews,
+        totalReviews,
+        averageRating,
+      });
     } catch (error) {
       console.error(error);
       res.status(500).send("Error fetching doctor details");
@@ -166,7 +193,7 @@ router.post(
   roleMiddleware("patient"),
   async (req, res) => {
     try {
-      const { date, day, startTime } = req.body;
+      const { date, day, startTime, reasonForVisit } = req.body;
 
       // 1. Validate the required form fields
       if (!date || !day || !startTime) {
@@ -283,6 +310,7 @@ router.post(
         date,
         startTime: selectedSlot.startTime,
         endTime: selectedSlot.endTime,
+        reasonForVisit: reasonForVisit?.trim() || "",
       });
 
       await appointment.save();
@@ -325,6 +353,26 @@ router.get(
           },
         })
         .sort({ date: 1, startTime: 1 });
+
+      // Find reviews submitted for these appointments
+      const reviews = await Review.find({
+        patient: req.session.userId,
+        appointment: {
+          $in: appointments.map((appointment) => appointment._id),
+        },
+      }).select("appointment");
+
+      // Store reviewed appointment IDs in a Set
+      const reviewedAppointmentIds = new Set(
+        reviews.map((review) => review.appointment.toString()),
+      );
+
+      // Add a hasReview property to each appointment
+      appointments.forEach((appointment) => {
+        appointment.hasReview = reviewedAppointmentIds.has(
+          appointment._id.toString(),
+        );
+      });
 
       res.render("patient/appointments", { appointments });
     } catch (error) {
@@ -741,6 +789,128 @@ router.post(
       return res
         .status(500)
         .send("Something went wrong while rescheduling the appointment.");
+    }
+  },
+);
+
+router.get(
+  "/appointments/:id/review",
+  authMiddleware,
+  roleMiddleware("patient"),
+  async (req, res) => {
+    try {
+      // Find the completed appointment belonging to the logged-in patient
+      const appointment = await Appointment.findOne({
+        _id: req.params.id,
+        patient: req.session.userId,
+        status: "completed",
+      }).populate({
+        path: "doctor",
+        populate: {
+          path: "user",
+          select: "name",
+        },
+      });
+
+      // Check whether the appointment exists
+      if (!appointment) {
+        return res
+          .status(404)
+          .send("Appointment not found or not eligible for review.");
+      }
+
+      // Check whether the patient has already reviewed this appointment
+      const existingReview = await Review.findOne({
+        appointment: appointment._id,
+      });
+
+      if (existingReview) {
+        return res
+          .status(400)
+          .send("You have already reviewed this appointment.");
+      }
+
+      // Render the review form
+      res.render("patient/review", { appointment });
+    } catch (error) {
+      console.error("Error loading review page:", error);
+      res.status(500).send("Unable to load review page.");
+    }
+  },
+);
+
+router.post(
+  "/appointments/:id/review",
+  authMiddleware,
+  roleMiddleware("patient"),
+  async (req, res) => {
+    try {
+      const { rating, comment } = req.body;
+
+      // 1. Validate rating
+      const numericRating = Number(rating);
+
+      if (
+        !Number.isInteger(numericRating) ||
+        numericRating < 1 ||
+        numericRating > 5
+      ) {
+        return res.status(400).send("Please select a valid rating.");
+      }
+
+      // 2. Validate comment length
+      const reviewComment = comment?.trim() || "";
+
+      if (reviewComment.length > 500) {
+        return res.status(400).send("Review cannot exceed 500 characters.");
+      }
+
+      // 3. Find the completed appointment belonging to this patient
+      const appointment = await Appointment.findOne({
+        _id: req.params.id,
+        patient: req.session.userId,
+        status: "completed",
+      });
+
+      if (!appointment) {
+        return res
+          .status(404)
+          .send("Appointment not found or not eligible for review.");
+      }
+
+      // 4. Check whether a review already exists
+      const existingReview = await Review.findOne({
+        appointment: appointment._id,
+      });
+
+      if (existingReview) {
+        return res
+          .status(400)
+          .send("You have already reviewed this appointment.");
+      }
+
+      // 5. Create and save the review
+      await Review.create({
+        patient: req.session.userId,
+        doctor: appointment.doctor,
+        appointment: appointment._id,
+        rating: numericRating,
+        comment: reviewComment,
+      });
+
+      // 6. Redirect after successful submission
+      return res.redirect("/patients/appointments");
+    } catch (error) {
+      // Handle duplicate review submissions
+      if (error.code === 11000) {
+        return res
+          .status(409)
+          .send("You have already reviewed this appointment.");
+      }
+
+      console.error("Error submitting review:", error);
+
+      return res.status(500).send("Unable to submit review.");
     }
   },
 );

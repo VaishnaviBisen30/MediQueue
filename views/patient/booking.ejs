@@ -79,6 +79,17 @@
                                         required
                                         class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
 
+                                    <label for="reason-<%= slot.startTime.replace(':', '') %>"
+                                        class="block text-sm font-medium text-slate-700 mt-4 mb-2">
+                                        Reason for Visit
+                                        <span class="text-slate-400 font-normal">(Optional)</span>
+                                    </label>
+
+                                    <textarea id="reason-<%= slot.startTime.replace(':', '') %>" name="reasonForVisit"
+                                        rows="3" maxlength="500"
+                                        placeholder="Briefly describe why you want to consult the doctor..."
+                                        class="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none"></textarea>
+
                                     <input type="hidden" name="day" value="<%= day %>" />
 
                                     <input type="hidden" name="startTime" value="<%= slot.startTime %>" />

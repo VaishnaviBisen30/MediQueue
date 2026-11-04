@@ -76,6 +76,94 @@
 
             </section>
 
+
+
+            <!-- Patient Reviews -->
+            <section class="mt-6 bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
+
+                <h2 class="text-xl font-bold text-slate-900">
+                    Patient Reviews
+                </h2>
+
+                <!-- Average Rating -->
+                <div class="mt-5 flex items-center gap-4">
+
+                    <div class="text-4xl font-extrabold text-slate-900">
+                        <%= averageRating %>
+                    </div>
+
+                    <div>
+                        <div class="flex items-center gap-1 text-yellow-400">
+                            <% for (let i=1; i <=5; i++) { %>
+                                <i
+                                    class="<%= i <= Math.round(Number(averageRating)) ? 'fa-solid' : 'fa-regular' %> fa-star"></i>
+                                <% } %>
+                        </div>
+
+                        <p class="text-sm text-slate-500 mt-1">
+                            Based on <%= totalReviews %>
+                                <%= totalReviews===1 ? "review" : "reviews" %>
+                        </p>
+                    </div>
+
+                </div>
+
+                <div class="border-t border-slate-200 my-6"></div>
+
+                <!-- Individual Reviews -->
+                <% if (reviews.length> 0) { %>
+
+                    <div class="space-y-5">
+
+                        <% reviews.forEach((review)=> { %>
+
+                            <div class="border border-slate-100 rounded-xl p-5">
+
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+
+                                    <div>
+                                        <h3 class="font-semibold text-slate-800">
+                                            <%= review.patient?.name || "Patient" %>
+                                        </h3>
+
+                                        <p class="text-xs text-slate-400 mt-1">
+                                            <%= new Date(review.createdAt).toLocaleDateString("en-IN") %>
+                                        </p>
+                                    </div>
+
+                                    <div class="flex items-center gap-1 text-yellow-400">
+                                        <% for (let i=1; i <=5; i++) { %>
+                                            <i
+                                                class="<%= i <= review.rating ? 'fa-solid' : 'fa-regular' %> fa-star"></i>
+                                            <% } %>
+                                    </div>
+
+                                </div>
+
+                                <% if (review.comment) { %>
+                                    <p class="text-slate-600 text-sm leading-6 mt-4">
+                                        <%= review.comment %>
+                                    </p>
+                                    <% } %>
+
+                            </div>
+
+                            <% }) %>
+
+                    </div>
+
+                    <% } else { %>
+
+                        <div class="rounded-xl bg-slate-50 border border-slate-200 p-5 mt-5">
+                            <p class="text-slate-500 text-sm">
+                                No reviews have been submitted for this doctor yet.
+                            </p>
+                        </div>
+
+                        <% } %>
+
+            </section>
+
             <!-- Availability -->
             <section class="mt-6 bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 shadow-sm">
 
