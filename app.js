@@ -27,7 +27,7 @@ app.use(
     cookie: { maxAge: 1000 * 60 * 60 * 24 }, // 1 day
   }),
 );
-    
+
 app.use((req, res, next) => {
   res.locals.alert = req.session.alert;
   delete req.session.alert;
@@ -60,6 +60,6 @@ app.use("/admin", adminRoutes);
 // Start server
 const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
