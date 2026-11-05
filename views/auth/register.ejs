@@ -1,6 +1,6 @@
 <%- include("../partials/header") %>
 
-    <div class="min-h-screen bg-gray-100 flex items-center justify-center px-4">
+    <div class="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-10">
 
         <div class="bg-white w-full max-w-md p-8 rounded-xl shadow-md">
 
@@ -35,7 +35,7 @@
                 </div>
 
                 <!-- Password -->
-                <div class="mb-6">
+                <div class="mb-4">
                     <label class="block text-gray-700 font-semibold mb-2">
                         Password
                     </label>
@@ -44,16 +44,93 @@
                         class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
                 </div>
 
+                <!-- Account Type -->
+                <div class="mb-6">
+                    <label class="block text-gray-700 font-semibold mb-2">
+                        Register As
+                    </label>
+
+                    <select name="role" id="role" required
+                        class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+
+                        <option value="patient">Patient</option>
+                        <option value="doctor">Doctor</option>
+
+                    </select>
+                </div>
+
+                <!-- Doctor Details -->
+                <div id="doctorFields" class="hidden">
+
+                    <h2 class="text-lg font-bold text-slate-800 mb-4">
+                        Doctor Details
+                    </h2>
+
+                    <!-- Specialization -->
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-semibold mb-2">
+                            Specialization
+                        </label>
+
+                        <input type="text" name="specialization" placeholder="e.g. Cardiologist"
+                            class="doctor-input w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Qualification -->
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-semibold mb-2">
+                            Qualification
+                        </label>
+
+                        <input type="text" name="qualification" placeholder="e.g. MBBS, MD"
+                            class="doctor-input w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Experience -->
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-semibold mb-2">
+                            Experience (Years)
+                        </label>
+
+                        <input type="number" name="experience" min="0" placeholder="Enter experience"
+                            class="doctor-input w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Consultation Fee -->
+                    <div class="mb-4">
+                        <label class="block text-gray-700 font-semibold mb-2">
+                            Consultation Fee
+                        </label>
+
+                        <input type="number" name="consultationFee" min="0" placeholder="Enter consultation fee"
+                            class="doctor-input w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <!-- About -->
+                    <div class="mb-6">
+                        <label class="block text-gray-700 font-semibold mb-2">
+                            About
+                        </label>
+
+                        <textarea name="about" rows="3" placeholder="Tell us about yourself"
+                            class="doctor-input w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+
+                </div>
+
                 <!-- Submit -->
                 <button type="submit"
                     class="w-full bg-blue-600 text-white py-2 rounded-lg font-semibold hover:bg-blue-700 transition">
+
                     Register
+
                 </button>
 
             </form>
 
             <p class="text-center text-gray-600 mt-6">
                 Already have an account?
+
                 <a href="/login" class="text-blue-600 font-semibold hover:underline">
                     Login
                 </a>
@@ -62,6 +139,31 @@
         </div>
 
     </div>
+
+    <!-- Toggle Doctor Fields -->
+    <script>
+
+        const roleSelect = document.getElementById("role");
+        const doctorFields = document.getElementById("doctorFields");
+        const doctorInputs = document.querySelectorAll(".doctor-input");
+
+        function toggleDoctorFields() {
+
+            const isDoctor = roleSelect.value === "doctor";
+
+            doctorFields.classList.toggle("hidden", !isDoctor);
+
+            doctorInputs.forEach((input) => {
+                input.required = isDoctor;
+            });
+
+        }
+
+        roleSelect.addEventListener("change", toggleDoctorFields);
+
+        toggleDoctorFields();
+
+    </script>
 
     <% if (alert) { %>
         <script>
